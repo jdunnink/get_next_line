@@ -6,7 +6,7 @@
 /*   By: jdunnink <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/03/27 18:04:22 by jdunnink      #+#    #+#                 */
-/*   Updated: 2019/04/16 12:33:19 by jdunnink      ########   odam.nl         */
+/*   Updated: 2019/04/16 14:09:53 by jdunnink      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,8 @@ static	void	read_buff(const int fd, t_list **d, t_list **b, t_byt *byt)
 	byt->read = BUFF_SIZE;
 	while (byt->read != 0 && !*b && byt->nl == 0)
 	{
-		buf = ft_memalloc(BUFF_SIZE);
+		buf = ft_strnew(BUFF_SIZE);
 		byt->read = read(fd, buf, BUFF_SIZE);
-		buf[byt->read] = '\0';
 		if (byt->read < 0)
 		{
 			ft_strdel(&buf);
