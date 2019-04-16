@@ -6,7 +6,7 @@
 /*   By: jdunnink <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/03/20 10:03:12 by jdunnink      #+#    #+#                 */
-/*   Updated: 2019/04/02 14:06:42 by jdunnink      ########   odam.nl         */
+/*   Updated: 2019/04/14 15:16:03 by jdunnink      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ typedef struct	s_list
 	struct s_list	*next;
 }				t_list;
 
-// check if
-
 int				ft_isspace(int c);
 int				ft_isnegative(int nb);
 int				ft_strnequ(char const *s1, char const *s2, size_t n);
@@ -41,16 +39,14 @@ int				ft_isalpha(int c);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
 int				ft_strcmp(const char *s1, const char *s2);
 
-// linked lists
-
+void			ft_lstpushfront(void const *bytes, t_list **lst, size_t size);
 void			ft_lstdelone(t_list **alst, void(*del)(void*, size_t));
 void			ft_lstdel(t_list **alst, void (*del)(void *, size_t));
+void			ft_del(void *content, size_t content_size);
 void			ft_lstadd(t_list **add, t_list *new);
 void			ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 t_list			*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 t_list			*ft_lstnew(void const *content, size_t content_size);
-
-// transform
 
 unsigned char	ft_reversebits(unsigned char octet);
 unsigned char	ft_swapbits(unsigned char octet);
@@ -62,8 +58,6 @@ void			ft_bzero(void *s, size_t n);
 void			ft_swap(int *a, int *b);
 int				ft_atoi(const char *str);
 int				ft_abs(int nb);
-
-// string manipulation
 
 char			**ft_strsplit(char const *s, char c);
 char			*ft_strtrim(char const *s);
@@ -86,8 +80,6 @@ size_t			ft_strlcat(char *dst, const char *src, size_t size);
 void			ft_strclr(char *s);
 void			ft_strdel(char **as);
 
-// memory
-
 void			*ft_memalloc(size_t size);
 void			*ft_memset(void *b, int c, size_t len);
 void			ft_memdel(void **ap);
@@ -95,8 +87,7 @@ void			*ft_memccpy(void *dst, const void *src, int c, size_t n);
 void			*ft_memcpy(void *dst, const void *src, size_t n);
 void			*ft_memmove(void *dst, const void *src, size_t len);
 void			*ft_memchr(const void *s, int c, size_t n);
-
-// print
+void			*ft_memdup(const void *src, size_t len);
 
 void			ft_printbits(unsigned char octec);
 void			ft_putnbr_fd(int n, int fd);

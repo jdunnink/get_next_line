@@ -6,11 +6,11 @@
 /*   By: jdunnink <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/02 13:52:42 by jdunnink      #+#    #+#                 */
-/*   Updated: 2019/04/02 14:05:37 by jdunnink      ########   odam.nl         */
+/*   Updated: 2019/04/08 17:50:13 by jdunnink      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-unsigned char ft_reversebit(unsigned char byte)
+unsigned char	ft_reversebit(unsigned char byte)
 {
 	unsigned char read;
 	unsigned char write;

@@ -6,78 +6,133 @@
 /*   By: jdunnink <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/03/27 18:04:22 by jdunnink      #+#    #+#                 */
-/*   Updated: 2019/04/04 15:20:27 by jdunnink      ########   odam.nl         */
+/*   Updated: 2019/04/16 12:33:19 by jdunnink      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include "libft.h"
-#include <stdio.h>
 
-char	*ft_strnjoin(char const *s1, char const *s2, size_t len)
+static	void	decide_push(void *buf, t_list **dest, t_list **save, t_byt *byt)
 {
-	char	*dest;
-	size_t	destlen;
-
-	if (!s1 || !s2)
-	{
-		printf("signal\n");
-		return (NULL);
-	}
-	dest = NULL;
-	destlen = ft_strlen(s1) + len;
-	if (s1 && s2)
-	{
-		dest = (char*)malloc(sizeof(char) * (destlen + 1));
-		if (!dest)
-			return (NULL);
-		ft_strcpy(dest, s1);
-		ft_strncat(dest, s2, len);
-	}
-	return (dest);
-}
-
-static char *add_line(char *buf, char **line)
-{
-	size_t i;
-	char *new;
+	char	*ptr;
+	int		i;
 
 	i = 0;
-	while(buf[i] != '\n' && buf[i] != '\0')
-		i++;
-	if(!*line)
-		new = ft_strsub(buf, 0, i);
-	else
+	ptr = (char*)buf;
+	while (i < byt->read)
 	{
-		new = ft_strnjoin(*line, buf, i);
+		if (*ptr == '\n')
+			byt->nl = 1;
+		ft_lstpushfront(ptr, dest, 1);
+		byt->dest++;
+		ptr++;
+		i++;
+		if (byt->nl == 1)
+			break ;
 	}
-	return (new);
+	if (i < byt->read)
+		ft_lstpushfront(ptr, save, byt->read - i);
 }
 
-int	get_next_line(int fd, char **line)
+static	void	load_string(t_list **dest, char **line, t_byt *byt)
 {
-	ssize_t bytes;
-	char	*buf;
-	char	*new;
+	t_list		*trail;
+	char		*ptr;
 
-	if (*line)
-		ft_strdel(line);
-	bytes = 1;
-	buf = ft_memalloc(BUFF_SIZE);
-	while (bytes != 0)
+	*line = ft_strnew(byt->dest);
+	if (*(char*)(*dest)->content == '\n')
 	{
-		bytes = read(fd, buf, BUFF_SIZE);
-		if (ft_memchr(buf, '\n', bytes) == 0)
-		{
-			*line  = add_line(buf, line);
-		}
-		else
-		{
-			new = add_line(buf, line);
-			free(*line);
-			line = &new;
-			break;
-		}
+		byt->dest--;
+		trail = (*dest)->next;
+		free((*dest)->content);
+		free(*dest);
+		*dest = trail;
 	}
-	return (0);
+	ptr = *line + (byt->dest - 1);
+	trail = *dest;
+	while (*dest && byt->dest)
+	{
+		*ptr = *(char*)(*dest)->content;
+		ptr = ptr - 1;
+		*dest = (*dest)->next;
+		free(trail->content);
+		free(trail);
+		trail = *dest;
+		byt->dest--;
+	}
+}
+
+static	void	read_backup(t_list **dest, t_list **backup, t_byt *byt)
+{
+	char	*ptr;
+	char	*new_backup;
+
+	ptr = (char *)(*backup)->content;
+	while ((*backup)->content_size > 0)
+	{
+		if (*ptr == '\n')
+			byt->nl = 1;
+		ft_lstpushfront(ptr, dest, 1);
+		((*backup)->content_size)--;
+		ptr++;
+		byt->dest++;
+		if (byt->nl == 1)
+			break ;
+	}
+	if ((*backup)->content_size == 0)
+	{
+		ft_lstdelone(backup, &ft_del);
+		return ;
+	}
+	new_backup = ft_memdup(ptr, ((*backup)->content_size));
+	ft_memdel(&((*backup)->content));
+	(*backup)->content = new_backup;
+}
+
+static	void	read_buff(const int fd, t_list **d, t_list **b, t_byt *byt)
+{
+	char	*buf;
+
+	byt->read = BUFF_SIZE;
+	while (byt->read != 0 && !*b && byt->nl == 0)
+	{
+		buf = ft_memalloc(BUFF_SIZE);
+		byt->read = read(fd, buf, BUFF_SIZE);
+		buf[byt->read] = '\0';
+		if (byt->read < 0)
+		{
+			ft_strdel(&buf);
+			break ;
+		}
+		decide_push(buf, d, b, byt);
+		ft_strdel(&buf);
+	}
+}
+
+int				get_next_line(const int fd, char **line)
+{
+	static t_list	*backup;
+	t_list			*dest;
+	t_byt			bytes;
+
+	bytes.nl = 0;
+	bytes.dest = 0;
+	if (fd < 0 || !line || BUFF_SIZE == 0)
+		return (-1);
+	dest = NULL;
+	if (backup)
+		read_backup(&dest, &backup, &bytes);
+	if (bytes.nl == 1 || backup)
+	{
+		load_string(&dest, line, &bytes);
+		return (1);
+	}
+	read_buff(fd, &dest, &backup, &bytes);
+	if (bytes.read < 0)
+		return (-1);
+	if (bytes.dest == 0 && !backup)
+		return (0);
+	load_string(&dest, line, &bytes);
+	return (1);
 }

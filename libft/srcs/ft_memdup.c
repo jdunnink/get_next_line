@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ft_lstadd.c                                        :+:    :+:            */
+/*   temp.c                                             :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdunnink <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2019/03/27 09:55:16 by jdunnink      #+#    #+#                 */
-/*   Updated: 2019/04/08 17:52:43 by jdunnink      ########   odam.nl         */
+/*   Created: 2019/04/14 13:11:01 by jdunnink      #+#    #+#                 */
+/*   Updated: 2019/04/14 15:11:02 by jdunnink      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstadd(t_list **alst, t_list *new)
+void	*ft_memdup(const void *src, size_t len)
 {
-	if (alst != NULL && new != NULL)
+	void *dest;
+
+	if (src)
 	{
-		new->next = *alst;
-		*alst = new;
+		dest = ft_memalloc(len);
+		dest = ft_memcpy(dest, src, len);
+		return (dest);
 	}
+	return (0);
 }

@@ -1,39 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   ft_del.c                                           :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jdunnink <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2019/03/28 17:47:52 by jdunnink      #+#    #+#                 */
-/*   Updated: 2019/04/04 15:13:20 by jdunnink      ########   odam.nl         */
+/*   Created: 2019/04/14 13:57:04 by jdunnink      #+#    #+#                 */
+/*   Updated: 2019/04/14 15:16:44 by jdunnink      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
 #include "libft.h"
-#include <stdio.h>
 
-int main(int argc, char **argv)
+void	ft_del(void *content, size_t content_size)
 {
-	int fd;
-	int r;
-	char *nl;
-	int i;
-
-	if(argc != 2)
+	if (content && content_size)
 	{
-		ft_putendl("You have given no/too many files to read");
-		return (0);
+		free(content);
+		content_size = 0;
 	}
-	fd = open(argv[1], O_RDONLY);
-
-	i = 2;
-	while(i-- > 0)
-	{ 
-		r = get_next_line(fd, &nl);
-		printf("%s\n", nl);
-	}
-	close(fd);
-	return (0); 
 }
