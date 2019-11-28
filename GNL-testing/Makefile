@@ -16,7 +16,7 @@ all: $(NAME)
 
 $(NAME):
 	make -C libft/ fclean && make -C libft/
-	clang -o test main.c -I libft/includes -L libft/ -lft
+	clang -o test main.c get_next_line.c -I libft/includes -L libft/ -lft
 
 clean:
 	/bin/rm -rf *.o
